@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QFrame,
+    QApplication
 )
 from PySide6.QtGui import QColor
 
@@ -16,7 +17,10 @@ from PySide6.QtGui import (
     QStandardItem,
 )
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import (
+    Qt,
+    QTimer
+)
 
 from conversions import (
     UNITS,
@@ -31,6 +35,7 @@ class UnitConverter(QWidget):
         super().__init__()
 
         self.last_result = ""
+        self.last_result_value = ""
 
         self.setup_window()
         self.build_ui()
@@ -137,6 +142,7 @@ class UnitConverter(QWidget):
             "Enter a value to begin."
         )
 
+
         self.result_label.setObjectName(
             "resultLabel"
         )
@@ -145,8 +151,15 @@ class UnitConverter(QWidget):
             Qt.AlignmentFlag.AlignCenter
         )
 
+        self.copy_button = QPushButton("📋 Copy Result")
+        self.copy_button.setEnabled(False)
+
         result_layout.addWidget(
             self.result_label
+        )
+
+        result_layout.addWidget(
+            self.copy_button
         )
 
         result_card.setLayout(result_layout)
@@ -172,6 +185,10 @@ class UnitConverter(QWidget):
 
         self.swap_button.clicked.connect(
             self.swap_units
+        )
+
+        self.copy_button.clicked.connect(
+            self.copy_result
         )
 
     # =====================================
@@ -348,8 +365,6 @@ class UnitConverter(QWidget):
     # Convert
     # =====================================
 
-    def format_number(number):
-        return f"{number:.4f}".rstrip("0").rstrip(".")
 
     def convert(self):
         text = (
@@ -402,6 +417,33 @@ class UnitConverter(QWidget):
 
         self.last_result = result_text
 
+        self.last_result_value = f"{format_number(result)}"
+
         self.result_label.setText(
             result_text
+        )
+
+        self.copy_button.setEnabled(True)
+
+    def copy_result(self):
+        if not self.last_result:
+            return
+        
+        clipboard = (
+            QApplication.clipboard()
+        )
+
+        clipboard.setText(
+            self.last_result_value
+        )
+
+        self.copy_button.setText(
+            "✓ Copied!"
+        )
+
+        QTimer.singleShot(
+            1500,
+            lambda: self.copy_button.setText(
+                "📋 Copy Result"
+            )
         )
