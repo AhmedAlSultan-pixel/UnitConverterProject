@@ -1,6 +1,8 @@
 # UnitConverterProject
 A small program that can convert between different units of measurement.
 
+Accessible exe can be found here: https://github.com/AhmedAlSultan-pixel/UnitConverterProject/releases/download/v0.1/UnitConverter.rar
+
 Some images showcasing the program:
 
 
